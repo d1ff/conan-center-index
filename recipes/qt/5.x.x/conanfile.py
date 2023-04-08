@@ -196,12 +196,12 @@ class QtConan(ConanFile):
             del self.options.opengl
             del self.options.with_vulkan
             del self.options.with_freetype
-            del self.options.with_fontconfig
+            self.options.rm_safe("with_fontconfig")
             del self.options.with_harfbuzz
             del self.options.with_libjpeg
             del self.options.with_libpng
             del self.options.with_md4c
-            del self.options.with_x11
+            self.options.rm_safe("with_x11")
 
         if not self.options.with_dbus:
             del self.options.with_atspi
@@ -1100,7 +1100,7 @@ Examples = bin/datadir/examples""")
                     self.cpp_info.components["qtClipboardSupport"].frameworks.append("AppKit")
                 _create_module("GraphicsSupport", ["Core", "Gui"])
 
-            if self.settings.os in ["Android", "Emscripten"]:
+            if self.settings.os in ["Android", "Emscripten"] and self.options.gui:
                 _create_module("EglSupport", ["Core", "Gui"])
 
             if self.settings.os == "Windows":
@@ -1114,7 +1114,7 @@ Examples = bin/datadir/examples""")
                 _create_plugin("QWindowsVistaStylePlugin", "qwindowsvistastyle", "styles", windows_reqs)
                 self.cpp_info.components["qtQWindowsIntegrationPlugin"].system_libs = ["advapi32", "dwmapi", "gdi32", "imm32",
                     "ole32", "oleaut32", "shell32", "shlwapi", "user32", "winmm", "winspool", "wtsapi32"]
-            elif self.settings.os == "Android":
+            elif self.settings.os == "Android" and self.options.gui:
                 android_reqs = ["Core", "Gui", "EventDispatcherSupport", "AccessibilitySupport", "FontDatabaseSupport", "EglSupport"]
                 if self.options.get_safe("with_vulkan"):
                     android_reqs.append("VulkanSupport")
